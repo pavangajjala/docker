@@ -1,18 +1,16 @@
-const keyValueDb = ProcessingInstruction.env.KEY_VALUE_DB;
-const keyValueUser = ProcessingInstruction.env.KEY_VALUE_USER;
-const keyValuePassword = ProcessingInstruction.env.KEY_VALUE_PASSWORD;
+const keyValueDb = process.env.KEY_VALUE_DB;
+const keyValueUser = process.env.KEY_VALUE_USER;
+const keyValuePassword = process.env.KEY_VALUE_PASSWORD;
 
 db = db.getSiblingDB(keyValueDb);
 
-db.createUser(
+db.createUser({
+  user: keyValueUser,
+  pwd: keyValuePassword,
+  roles: [
     {
-        user: keyValueUser,
-        pwd: keyValuePassword,
-        rules: [
-            {
-                role: 'readWrite',
-                db: 'key-value-db'
-            }
-        ]
-    }
-)
+      role: 'readWrite',
+      db: keyValueDb,
+    },
+  ],
+});
