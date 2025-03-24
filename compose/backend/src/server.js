@@ -8,6 +8,11 @@ const port = process.env.PORT;
 const app = express();
 
 app.use(bodyParser.json());
+app.get('/', (req, res) => {
+  return res.json({
+    message: 'Welcome to our Key-Value store',
+  });
+});
 app.use('/health', healthRouter);
 app.use('/store', keyValueRouter);
 
@@ -27,7 +32,7 @@ mongoose
     app.listen(port, () => {
       console.log(`Listening on port ${port}`);
     });
-    console.log('Connected to DB');
+    console.log('Connected to DB!');
   })
   .catch((err) => {
     console.error('Something went wrong!');
