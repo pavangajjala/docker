@@ -1,0 +1,112 @@
+Docker Swarm
+++++++++++++++
+
+-> It is a container orchestration sofware
+
+-> Orchestration means managing processes/containers
+
+-> Docker Swarm is used to setup Docker Cluster (Load Balancing)
+
+-> Cluster means group of servers
+
+-> Docker swarm is embedded in Docker engine
+
+-> We will setup Master and Worker nodes using Docker Swarm cluster
+
+-> Master will schedule the tasks (containers) and manage the nodes and node failures
+
+-> Worker nodes will perform the action (containers will run here)
+
+
+Swarm Features
++++++++++++++++
+1) Cluster Management
+2) Decentralize design
+3) Declarative service model
+4) Scaling
+5) Multi Host Network
+6) Service Discovery
+7) Load Balancing
+8) Secure by default
+9) Rolling Updates
+
+
+Setup
++++++
+
+-> Create 3 EC2 instances (ubuntu)
+
+Note: Enable 2377 port for Swarm Cluster Communications
+
+$ curl -fsSL https://get.docker.com -o get-docker.sh
+$ sudo sh get-docker.sh
+
+
+1  - Master
+2  - Nodes
+
+
+-> Connect to Master Machine and execute below command
+
+$ sudo docker swarm init --advertise-addr 172.31.42.162
+
+$ sudo docker swarm join-token worker
+
+$ sudo docker swarm join --token SWMTKN-1-21l3z1izmf6plkgprlzfcr87fcxcsl3k2k79iax7yfyh3k4a00-cfgwhikmbcgsklhsxkroj8vad 172.31.38.222:2377
+
+
+Q) what is docker swarm manager quarm?
+
+Ans) If we run only 1 master node then we can't get gaurantee High Availability for the application
+
+
+Formula : (n-1)/2
+
+If we take 2 master nodes
+
+2-1/2 => 0.5 ( It can't become master )
+
+3-1/2 => 1 (it can be leader when the main leader is down)
+
+Note: Always use odd number for Master machines when we are using Docker Swarm Cluster
+
+
+
+-> If we use "docker run" command then our application will executed in one container
+
+-> In Docker swarm we need to deploy our application as a service.
+
+Docker Swarm Service
++++++++++++++++++++++
+
+-> Service is collection of one or more containers of same image
+
+-> There are 2 types of services in docker swarm
+
+1) Replica (default mode)
+2) global
+
+
+$ sudo docker service create --name <serviceName> -p <hostPort>:<containerPort> <imageName>
+
+$ sudo docker service create --name java-web-app -p 8080:8080 ashokit/javawebapp
+
+Note: By default 1 replica will be created
+
+# check the services created
+$ docker service ls 
+
+# we can scale docker service
+$ sudo docker service scale <serviceName>=<no.of.replicas>
+
+# inspect docker service
+$ sudo docker service inspect --pretty java-web-app
+
+# see service details
+$ sudo docker service ps java-web-app
+
+# Remove one node from swarm cluster
+$ sudo docker swarm leave
+
+# remove docker service 
+$ docker service rm java-web-app
